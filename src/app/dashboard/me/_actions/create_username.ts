@@ -35,20 +35,31 @@ export async function createUsername(data: createUsernameFormData) {
         const userId = session.user.id;
 
         const slug = createSlug(data.username);
+        
+        const existSlug = await prisma.user.findFirst({
+            where:{
+                username: slug
+            },
+        })
 
-        console.log("Slug gerado:", slug);
-
-       // await prisma.user.update({
-       //     where: {
-       //         id: userId
-       //     },
-       //     data: {
-       //         username: data.username
-       //     }
-       // });
+        if(existSlug){
+            return{
+                data: null,
+                error: "Este username já existe, tente outro."
+            }
+        }
+        
+       await prisma.user.update({
+           where: {
+               id: userId
+           },
+           data: {
+               username: slug
+           }
+       });
 
         return {
-            data: "Deu certo",
+            data: slug,
             error: null   
         }
     

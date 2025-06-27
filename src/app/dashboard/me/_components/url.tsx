@@ -5,9 +5,14 @@ import { createUsername } from "../_actions/create_username";
 import { useState } from "react";
 import { string } from "zod";
 
-export function UrlPreview(){
+interface UrlPreviewProps{
+    username: string | null;
+}
+
+export function UrlPreview({ username : slug}: UrlPreviewProps){
 
     const [error, setError] = useState<null | string>(null);
+    const [username, setUsername] = useState(slug)
 
     async function submitAction(formData: FormData) {
         const username = formData.get("username") as string
@@ -20,8 +25,23 @@ export function UrlPreview(){
 
         if (response.error) {
             setError(response.error);
+            return;
         }
 
+        if( response.data){
+            setUsername(response.data)
+        }
+
+    }
+
+    if(!!username){
+        return(
+            <div className="flex items-center flex-1 p-2 text-gray-100">
+                <div className="flex items-center justify-center w-full">
+                    {process.env.NEXT_PUBLIC_HOST_URL}creator/{username}
+                </div>
+            </div>
+        )
     }
 
     return(
