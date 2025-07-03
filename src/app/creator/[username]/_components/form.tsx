@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup } from "@radix-ui/react-radio-group";
 import { RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@radix-ui/react-label";
+import { createPayment } from "../_actions/create-payments";
 
 const formSchema = z.object({
     name: z.string().min(1, "O nome é obrigatório"),
@@ -17,11 +18,16 @@ const formSchema = z.object({
     price: z.enum(["15", "25", "35"], {
         required_error: "O valor é obrigatório",
     })
-});
+})
 
 type FormData = z.infer<typeof formSchema>;
 
-export function FormDonate(){
+interface FormDonateProps {
+    creatorId: string
+    slug: string
+}
+
+export function FormDonate({slug, creatorId}: FormDonateProps) {
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
@@ -32,8 +38,20 @@ export function FormDonate(){
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
+    async function onSubmit(data: FormData) {
+
+        const priceInCents = Number(data.price) * 100;
+
+        const checkout = await createPayment({
+            name: data.name,
+            message: data.message,
+            creatorId: creatorId,
+            slug: slug,
+            price: priceInCents
+        });
+
+        console.log(checkout);
+
     }
     
     return(
