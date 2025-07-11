@@ -4,6 +4,7 @@ import { create } from "domain";
 import { createUsername } from "../_actions/create_username";
 import { useState } from "react";
 import { string } from "zod";
+import { Link } from "lucide-react";
 
 interface UrlPreviewProps{
     username: string | null;
@@ -40,6 +41,9 @@ export function UrlPreview({ username : slug}: UrlPreviewProps){
                 <div className="flex items-center justify-center w-full">
                     {process.env.NEXT_PUBLIC_HOST_URL}creator/{username}
                 </div>
+                <a href={`${process.env.NEXT_PUBLIC_HOST_URL}creator/${username}`}>
+                    <Link className="ml-2 text-blue-500 hover:text-blue-600 cursor-pointer" />
+                </a>
             </div>
         )
     }

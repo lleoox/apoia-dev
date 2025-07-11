@@ -11,8 +11,8 @@ export async function getLoginOnboardAccount(accountID: string | undefined) {
 
     const accountLink = await stripe.accountLinks.create({
         account: accountID,
-        refresh_url: process.env.HOST_URL,
-        return_url: process.env.HOST_URL,
+        refresh_url:  `${process.env.HOST_URL!}/dashboard`,
+        return_url:  `${process.env.HOST_URL!}/dashboard`,
         type: "account_onboarding",
     })     
     
