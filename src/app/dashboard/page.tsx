@@ -15,7 +15,6 @@ export default async function Dashboard() {
 
   const accountURL = await getLoginOnboardAccount(session.user.connectStripeAccountId)
 
-
   return (
     <div className="p-4">
       <section className="flex items-center justify-between mb-4">
@@ -41,7 +40,9 @@ export default async function Dashboard() {
 
 
       <h2 className="text-2xl font-semibold mb-2">Últimas doações</h2>
-      <DonationTable />
+      {session.user.connectStripeAccountId &&(
+        <DonationTable />
+      )}
     </div>
   );
 }
