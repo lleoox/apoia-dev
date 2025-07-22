@@ -20,14 +20,12 @@ export async function createPayment(data: CreatepaymentSchema) {
 
     if(!schema.success) {
         return {
-            data:null,
             error: schema.error.issues[0].message
         }
     }
 
     if(!data.creatorId) {
         return {
-            data: null,
             error: "O id do Criador é obrigatório"
         }
     }
@@ -42,7 +40,6 @@ export async function createPayment(data: CreatepaymentSchema) {
 
         if(!creator) {
             return {
-                data: null,
                 error: "Criador nao encontrado"
             }
         }
@@ -90,13 +87,11 @@ export async function createPayment(data: CreatepaymentSchema) {
          })
 
         return {
-             data: JSON.stringify(session),
-             error: null,
+             sessionId: session.id,
         }
 
     }catch(err){
         return {
-            data: null,
             error: "Erro ao criar o pagamento, tente novamente mais tarde"
         }
     }

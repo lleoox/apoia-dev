@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getLoginOnboardAccount } from "./_data-access/create-onboard-account";
 import { CreateAccountButton } from "./_components/create-account-button";
+import { getAllDonate } from "./_data-access/get-donate";
 
 export default async function Dashboard() {
 
@@ -14,7 +15,7 @@ export default async function Dashboard() {
   }
 
   const accountURL = await getLoginOnboardAccount(session.user.connectStripeAccountId)
-
+  const donates = await getAllDonate(session.user.id);
 
   return (
     <div className="p-4">
@@ -37,11 +38,15 @@ export default async function Dashboard() {
         <CreateAccountButton />
       )}
 
-      <Stats />
+      <Stats userId={session.user.id} stripeAccountId={session.user.connectStripeAccountId ?? ""} />
 
 
       <h2 className="text-2xl font-semibold mb-2">Últimas doações</h2>
-      <DonationTable />
+
+      {session.user.connectStripeAccountId && (
+        <DonationTable data={donates.data ?? []} />
+      )}
+
     </div>
   );
 }

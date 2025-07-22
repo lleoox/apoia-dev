@@ -13,6 +13,7 @@ import { Label } from "@radix-ui/react-label";
 import { createPayment } from "../_actions/create-payments";
 import { toast } from "sonner";
 import { getStripeJs } from "@/lib/stripe-js";
+import { prisma } from "@/lib/prisma";
 
 const formSchema = z.object({
     name: z.string().min(1, "O nome é obrigatório"),
@@ -52,23 +53,37 @@ export function FormDonate({ slug, creatorId }: FormDonateProps) {
             price: priceInCents
         });
 
-        console.log(checkout);
+        await handlePaymentResponse(checkout)
+
+    }
+
+    async function handlePaymentResponse(checkout: { sessionId?: string; error?: string }) {
 
         if(checkout.error){
             toast.error(checkout.error)
             return;
         }
 
-        if(checkout.data){
-            const data = JSON.parse(checkout.data)
-            
-            const stripe = await getStripeJs();
-
-            await stripe?.redirectToCheckout({ 
-                sessionId: data.id as string
-            })
-
+        if(!checkout.sessionId){
+            toast.error("Falha ao criar o pagamento!, tente novamente mais tarde")
+            return;
         }
+
+        const stripe = await getStripeJs();
+
+        if(!stripe){
+            toast.error("Falha ao criar o pagamento!, tente novamente mais tarde")
+            return
+        }
+          
+        await stripe?.redirectToCheckout({ 
+                sessionId: checkout.sessionId
+        })
+
+        const status = await prisma.donation.update({
+            where: { id: checkout.sessionId },
+                data: { status: "PAID" },
+        })
 
     }
     
