@@ -59,6 +59,7 @@ export function FormDonate({ slug, creatorId }: FormDonateProps) {
 
     async function handlePaymentResponse(checkout: { sessionId?: string; error?: string }) {
 
+    async function handlePaymentResponse(checkout: {sessionId?: string, error?: string}){
         if(checkout.error){
             toast.error(checkout.error)
             return;
