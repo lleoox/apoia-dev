@@ -42,7 +42,11 @@ export default async function Dashboard() {
 
 
       <h2 className="text-2xl font-semibold mb-2">Últimas doações</h2>
-      <DonationTable />
+
+      {session.user.connectStripeAccountId && (
+        <DonationTable data={donates.data ?? []} />
+      )}
+
     </div>
   );
 }
