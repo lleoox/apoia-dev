@@ -37,14 +37,16 @@ export default async function Dashboard() {
       {!session.user.connectStripeAccountId && (
         <CreateAccountButton />
       )}
-
-      <Stats userId={session.user.id} stripeAccountId={session.user.connectStripeAccountId ?? ""} />
-
-
-      <h2 className="text-2xl font-semibold mb-2">Últimas doações</h2>
-
       {session.user.connectStripeAccountId && (
-        <DonationTable data={donates.data ?? []} />
+        <>
+          <Stats userId={session.user.id} stripeAccountId={session.user.connectStripeAccountId ?? ""} />
+
+
+          <h2 className="text-2xl font-semibold mb-2">Últimas doações</h2>
+
+        
+            <DonationTable data={donates.data ?? []} />
+        </>
       )}
 
     </div>

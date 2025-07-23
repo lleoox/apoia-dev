@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Donation } from '@/generated/prisma';
+import { formatCurrency, formatDate } from '@/utils/formart';
 
 type DonationProp = Pick<Donation, 'id' | 'amount' | 'createdAt' | 'donorMessage' | 'donorName'>;
 
@@ -36,10 +37,10 @@ export function DonationTable({ data} : DonationTableProps) {
                 <TableCell className="font-medium">{donation.donorName}</TableCell>
                 <TableCell className="max-w-72">{donation.donorMessage}</TableCell>
                 <TableCell className="text-center">
-                  {donation.amount}
+                  {formatCurrency(donation.amount)}
                 </TableCell>
                 <TableCell className="text-center">
-                  {donation.createdAt.toDateString()}
+                  {formatDate(donation.createdAt)}
                 </TableCell>
               </TableRow>
             ))}
@@ -58,10 +59,10 @@ export function DonationTable({ data} : DonationTableProps) {
               <p className="text-sm text-muted-foreground mb-2">{donation.donorMessage}</p>
               <div className="flex justify-between items-center">
                 <span className="text-green-500 font-semibold">
-                  {donation.amount}
+                  {formatCurrency(donation.amount)}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  {donation.createdAt.toDateString()}
+                  {formatDate(donation.createdAt)}
                 </span>
               </div>
             </CardContent>
