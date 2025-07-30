@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, formatDate } from '../../../utils/formart';
 import { useQuery } from '@tanstack/react-query';
 import { Donation } from '@/generated/prisma';
+import { formatCurrency, formatDate } from '@/utils/formart';
 
 interface ResponseData{
   data: Donation[]
