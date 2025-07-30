@@ -1,3 +1,5 @@
+"use client"
+
 import React from 'react';
 import {
   Table,
@@ -8,15 +10,42 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency, formatDate } from '../../../utils/formart';
+import { useQuery } from '@tanstack/react-query';
 import { Donation } from '@/generated/prisma';
 
-type DonationProp = Pick<Donation, 'id' | 'amount' | 'createdAt' | 'donorMessage' | 'donorName'>;
-
-interface DonationTableProps{
-  data: DonationProp[]
+interface ResponseData{
+  data: Donation[]
 }
 
-export function DonationTable({ data} : DonationTableProps) {
+export function DonationTable() {
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['get-donates'],
+    queryFn: async () => {
+
+      const url = `${process.env.NEXT_PUBLIC_HOST_URL}/api/donates`;
+
+      const response = await fetch(url)
+      const json = await response.json() as ResponseData;
+
+      if(!response.ok){
+        return [];
+      }
+
+      return json.data;
+    },
+    refetchInterval: 10000
+  });
+
+  if (isLoading) {
+    return(
+      <div className='mt-5'>
+        <p className="text-center text-gray-600">Carregando...</p>
+      </div>
+    ) 
+  }
+
   return (
     <>
       {/* Versão para desktop */}
@@ -31,15 +60,15 @@ export function DonationTable({ data} : DonationTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((donation) => (
+            {data && data.map((donation) => (
               <TableRow key={donation.id}>
                 <TableCell className="font-medium">{donation.donorName}</TableCell>
                 <TableCell className="max-w-72">{donation.donorMessage}</TableCell>
                 <TableCell className="text-center">
-                  {donation.amount}
+                  {formatCurrency(donation.amount)}
                 </TableCell>
                 <TableCell className="text-center">
-                  {donation.createdAt.toDateString()}
+                  {formatDate(donation.createdAt)}
                 </TableCell>
               </TableRow>
             ))}
@@ -49,7 +78,7 @@ export function DonationTable({ data} : DonationTableProps) {
 
       {/* Versão para mobile */}
       <div className="lg:hidden space-y-4">
-        {data.map((donation) => (
+        {data && data.map((donation) => (
           <Card key={donation.id}>
             <CardHeader>
               <CardTitle className="text-lg">{donation.donorName}</CardTitle>
@@ -58,10 +87,10 @@ export function DonationTable({ data} : DonationTableProps) {
               <p className="text-sm text-muted-foreground mb-2">{donation.donorMessage}</p>
               <div className="flex justify-between items-center">
                 <span className="text-green-500 font-semibold">
-                  {donation.amount}
+                  {formatCurrency(donation.amount)}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  {donation.createdAt.toDateString()}
+                  {formatDate(donation.createdAt)}
                 </span>
               </div>
             </CardContent>
